@@ -1,0 +1,264 @@
+version 15.5
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname HQ1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$bDUs$v7X.RclcVZcT2nDqPVkX1/
+!
+no aaa new-model
+!
+!
+!
+bsd-client server url https://cloudsso.cisco.com/as/token.oauth2
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+no ip icmp rate-limit unreachable
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 192.168.0.0 192.168.0.10
+ip dhcp excluded-address 192.168.0.128 192.168.0.138
+!
+ip dhcp pool VLAN10
+ network 192.168.0.0 255.255.255.128
+ default-router 192.168.0.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool VLAN20
+ network 192.168.0.128 255.255.255.128
+ default-router 192.168.0.129
+ dns-server 8.8.8.8
+!
+!
+!
+no ip domain lookup
+ip domain name company.com
+no ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+cts logging verbose
+!
+!
+username IT privilege 15 password 7 0822455D0A16
+!
+redundancy
+!
+no cdp run
+!
+ip tcp synwait-time 5
+ip ssh version 2
+!
+!
+!
+!
+!
+crypto isakmp policy 10
+ encr aes
+ hash sha256
+ authentication pre-share
+ group 14
+crypto isakmp key cisco address 192.168.3.10
+crypto isakmp key cisco address 192.168.3.14
+!
+!
+crypto ipsec transform-set TS esp-aes esp-sha-hmac
+ mode transport
+!
+!
+!
+crypto map GRE-CMAP 10 ipsec-isakmp
+ set peer 192.168.3.10
+ set transform-set TS
+ match address GRE-VPN-ACL
+crypto map GRE-CMAP 20 ipsec-isakmp
+ set peer 192.168.3.14
+ set transform-set TS
+ match address GRE-VPN-ACL-S2
+!
+!
+!
+!
+!
+interface Tunnel0
+ ip address 172.16.1.1 255.255.255.252
+ ip mtu 1400
+ tunnel source 192.168.3.2
+ tunnel destination 192.168.3.10
+!
+interface Tunnel1
+ ip address 172.16.1.5 255.255.255.252
+ ip mtu 1400
+ tunnel source 192.168.3.2
+ tunnel destination 192.168.3.14
+!
+interface Ethernet0/0
+ ip address 192.168.3.2 255.255.255.252
+ crypto map GRE-CMAP
+!
+interface Ethernet0/1
+ no ip address
+!
+interface Ethernet0/1.10
+ encapsulation dot1Q 10
+ ip address 192.168.0.2 255.255.255.128
+ standby 1 ip 192.168.0.1
+ standby 1 priority 110
+ standby 1 preempt
+!
+interface Ethernet0/1.20
+ encapsulation dot1Q 20
+ ip address 192.168.0.130 255.255.255.128
+ standby 2 ip 192.168.0.129
+ standby 2 priority 110
+ standby 2 preempt
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+interface Serial2/0
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial2/1
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial2/2
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial2/3
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial3/0
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial3/1
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial3/2
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+interface Serial3/3
+ no ip address
+ shutdown
+ serial restart-delay 0
+!
+router ospf 1
+ router-id 0.0.0.1
+ passive-interface Ethernet0/1
+ passive-interface Ethernet0/1.10
+ passive-interface Ethernet0/1.20
+ network 172.16.1.0 0.0.0.3 area 0
+ network 172.16.1.4 0.0.0.3 area 0
+ network 192.168.0.0 0.0.0.63 area 0
+ network 192.168.0.128 0.0.0.63 area 0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 192.168.3.1
+!
+ip access-list extended GRE-VPN-ACL
+ permit gre host 192.168.3.2 host 192.168.3.10
+ip access-list extended GRE-VPN-ACL-S2
+ permit gre host 192.168.3.2 host 192.168.3.14
+ip access-list extended SSH-ACL
+ remark SSH connection allowed only for IT department
+ permit tcp 192.168.0.128 0.0.0.63 any eq 22
+ permit tcp 192.168.2.0 0.0.0.255 any eq 22
+ deny   tcp any any eq 22
+ permit ip any any
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ password 7 070C285F4D06
+ logging synchronous
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+line vty 0 4
+ access-class SSH-ACL in
+ password 7 14131D0518102F2728
+ login local
+ transport input ssh
+!
+!
+end
