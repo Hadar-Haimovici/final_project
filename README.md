@@ -1,2 +1,1 @@
-# final_project
-Final Project ITQ
+# final project ITQ
