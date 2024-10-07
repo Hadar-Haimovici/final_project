@@ -1,2 +1,3 @@
 # final project ITQ
-![image](https://github.com/user-attachments/assets/d63ccf76-9410-46e8-84ec-090a420e00a4)
+![image](https://github.com/user-attachments/assets/e3ccdb49-eca6-4cce-93bf-53d51198b767)
+
