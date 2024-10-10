@@ -1,0 +1,37 @@
+---
+- name: Manage Cisco IOS Devices
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Show Running Configuration
+      ios_command:
+        commands:
+          - show running-config
+      register: running_config
+
+    - name: Display Running Configuration Output
+      debug:
+        var: running_config.stdout
+
+    - name: Configure a Banner Message
+      ios_command:
+        commands:
+          - banner motd #
+          - This is a managed device. Unauthorized access is prohibited. #
+          - exit
+      when: running_config is defined
+
+- name: Configure Cisco IOS Devices
+  hosts: Access_Switches
+  gather_facts: no
+  tasks:
+
+    - name: Configure an Access Switchport 
+      ios_command:
+        commands:
+          - interface GigabitEthernet3/0
+          - description Connected to end-device
+          - no shutdown
+          - exit
+      when: running_config is defined
+      
