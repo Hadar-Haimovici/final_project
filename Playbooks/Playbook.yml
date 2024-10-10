@@ -2,6 +2,7 @@
 - name: Manage Cisco IOS Devices
   hosts: all
   gather_facts: no
+  
   tasks:
     - name: Show Running Configuration
       ios_command:
