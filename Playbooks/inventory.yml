@@ -6,50 +6,39 @@ all:
         HQ1:
           ansible_host: 192.168.0.2
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         HQ2:
           ansible_host: 192.168.0.3
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         SITE1:
           ansible_host: 192.168.1.1
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         SITE2:
           ansible_host: 192.168.2.2
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
 
     switches:
       hosts:
         L3:
           ansible_host: 192.168.3.1
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         ACC1:
           ansible_host: 192.168.0.4
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         ACC2:
           ansible_host: 192.168.0.5
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         DIS1:
           ansible_host: 192.168.0.6
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         DIS2:
           ansible_host: 192.168.0.7
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         SW1:
           ansible_host: 192.168.1.2
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
         SW2:
           ansible_host: 192.168.2.2
           ansible_user: IT
-          ansible_ssh_private_key_file: /path/to/private/key
 
   vars:
     ansible_python_interpreter: /usr/bin/python3
